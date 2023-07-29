@@ -1,5 +1,5 @@
 [package]
-name = "simple_flashcards_rs"
+name = "flash_card"
 version = "0.1.0"
 edition = "2021"
 
