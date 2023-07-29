@@ -1,4 +1,7 @@
+mod deck;
+
 use std::io::{self, Write};
+use deck::*;
 
 const MENU_STRING: &str = "
     Main Menu
@@ -49,26 +52,4 @@ fn main() {
             }
         }
     }
-}
-
-struct Subject{
-    name: String,
-    arguments: Vec<Argument>
-}
-
-struct Argument {
-    name: String,
-    flashcards: Vec<Card>
-}
-
-struct Card {
-    keyword: String,
-    description: String,
-    priority_index: i32,
-    side: CardSide
-}
-
-enum CardSide{
-    Front,
-    Back
 }
