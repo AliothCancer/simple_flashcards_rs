@@ -1,5 +1,7 @@
+mod deck;
 
 use std::{io::{self, Write}, collections::HashMap};
+use deck::*;
 
 const MENU_STRING: &str = "
     Main Menu
@@ -100,12 +102,6 @@ fn main() {
     
 }
 
-struct Subject{
-    name: String,
-    arguments: Vec<Argument>
-}
-
-
 impl Default for Subject{
     fn default() -> Self { // only for example purpose
         let card = Card{
@@ -126,21 +122,3 @@ impl Default for Subject{
         }
     }
 }
-
-struct Argument {
-    name: String,
-    flashcards: Vec<Card>
-}
-
-struct Card {
-    keyword: String,
-    description: String,
-    priority_index: i32,
-    side: CardSide
-}
-
-enum CardSide{
-    Front,
-    Back
-}
-
