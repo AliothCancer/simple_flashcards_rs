@@ -1,2 +1,2 @@
 # simple_flashcards_rs
-A simple flashcard creator, manager and viewer with GUI, using egui.
+A simple flashcard creator, manager and viewer with GUI, using egui or iced who will know.
