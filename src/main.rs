@@ -1,50 +1,93 @@
-#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
+use iced::widget::{button, column, text, container, Column, vertical_space};
+use iced::{Alignment, Element, Sandbox, Settings, Length};
 
-use eframe::egui;
 
-fn main() -> Result<(), eframe::Error> {
-    env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
-    let options = eframe::NativeOptions {
-        initial_window_size: Some(egui::vec2(320.0, 240.0)),
-        ..Default::default()
-    };
-    eframe::run_native(
-        "My egui App",
-        options,
-        Box::new(|_cc| Box::<MyApp>::default()),
-    )
+pub fn main() -> iced::Result {
+    MainWindow::run(Settings::default())
 }
 
-struct MyApp {
-    name: String,
-    age: u32,
+struct MainWindow {}
+
+struct CreateNewSubject{}
+
+#[derive(Debug, Clone, Copy)]
+enum Message {
+    NewSubjectPressed,
+    
 }
 
-impl Default for MyApp {
-    fn default() -> Self {
-        Self {
-            name: "Arthur".to_owned(),
-            age: 42,
+impl Sandbox for MainWindow {
+    type Message = Message;
+
+    fn new() -> Self {
+        Self { }
+    }
+
+    fn title(&self) -> String {
+        String::from("MainWindows - Iced")
+    }
+
+    fn update(&mut self, message: Message) {
+        match message {
+            Message::NewSubjectPressed => {
+                println!("New Subject has been pressed!")
+            }
         }
+    }
+
+    fn view(&self) -> Element<Message> {
+        let content: Column<'_, Message, _> = column![
+            text("Wellcome! Click onto the new subject button to create a new subject to start!"),
+            vertical_space(50),
+            button("Create new subject").on_press(Message::NewSubjectPressed),
+            vertical_space(50),
+            "You will be able to create the deck cards selecting one of the deck you created"
+        ]
+        .padding(100)
+        .align_items(Alignment::Center)
+        .into();
+
+        container(content)
+            .width(Length::Fill)
+            .height(Length::Fill)
+            .center_x()
+            .center_y()
+            .into()
     }
 }
 
-impl eframe::App for MyApp {
-    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
-        egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("My egui Application");
-            ui.vertical_centered_justified(|ui| {
-                let name_label = ui.label("Your name: ");
-                ui.text_edit_singleline(&mut self.name)
-                    .labelled_by(name_label.id);
-            });
-            ui.add(egui::Slider::new(&mut self.age, 0..=120).text("age"));
-            if ui.button("Click each year").clicked() {
-                self.age += 1;
+impl Sandbox for CreateNewSubject {
+    type Message = Message;
+
+    fn new() -> Self {
+        Self { }
+    }
+
+    fn title(&self) -> String {
+        String::from("Create new subject - Iced")
+    }
+
+    fn update(&mut self, message: Message) {
+        match message {
+            Message::NewSubjectPressed => {
+                todo!()
             }
-            ui.add(egui::Checkbox::new(&mut false, "checkbox"));
-            
-            ui.label(format!("Hello '{}', age {}", self.name, self.age));
-        });
+        }
+    }
+
+    fn view(&self) -> Element<Message> {
+        let content: Column<'_, Message, _> = column![
+            "Some text here"
+            ]
+        .padding(100)
+        .align_items(Alignment::Center)
+        .into();
+
+        container(content)
+            .width(Length::Fill)
+            .height(Length::Fill)
+            .center_x()
+            .center_y()
+            .into()
     }
 }
