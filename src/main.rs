@@ -1,146 +1,50 @@
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
-use std::{io::{self, Write}, collections::HashMap};
+use eframe::egui;
 
-const MENU_STRING: &str = "
-    Main Menu
-
-    0. Exit
-    1. New subject
-"; 
-
-
-struct MenuOptions{
-    menu_name: String,
-    option_list: Vec<String>
+fn main() -> Result<(), eframe::Error> {
+    env_logger::init(); // Log to stderr (if you run with `RUST_LOG=debug`).
+    let options = eframe::NativeOptions {
+        initial_window_size: Some(egui::vec2(320.0, 240.0)),
+        ..Default::default()
+    };
+    eframe::run_native(
+        "My egui App",
+        options,
+        Box::new(|_cc| Box::<MyApp>::default()),
+    )
 }
 
-impl MenuOptions {
-    fn new<T: Into<String>>(menu_name: &str, option_list: Vec<T>) -> Self {
-        let converted_option_list: Vec<String> = option_list.into_iter().map(|item| item.into()).collect();
-        MenuOptions {
-            menu_name: menu_name.to_string(),
-            option_list: converted_option_list,
+struct MyApp {
+    name: String,
+    age: u32,
+}
+
+impl Default for MyApp {
+    fn default() -> Self {
+        Self {
+            name: "Arthur".to_owned(),
+            age: 42,
         }
     }
-    fn option_call(menu: MenuOptions){
-        menu.run()
-    }
-    fn run(self) {
+}
 
-        let mut cmd = String::new();
-        loop {
-
-            self.print_title();
-            self.print_options();
-
-            print!("\n>>> ");
-            io::stdout().flush().unwrap();
-            io::stdin().read_line(&mut cmd).expect("Errore leggendo");
-
-            // Parse the input command to get the selected index
-            match cmd.trim().parse::<usize>() {
-                Ok(option_index) => {
-                    if option_index < self.option_list.len() {
-                        println!("Selected: {}\n\n", self.option_list[option_index]);
-                        //call menu.option_call()
-                        if option_index == 0{
-                            break
-                        }
-                    } else {
-                        println!("Invalid option index: {}\n\n", option_index);
-                    }
-                }
-                Err(_) => {
-                    println!("Invalid input: {}", cmd);
-                }
+impl eframe::App for MyApp {
+    fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            ui.heading("My egui Application");
+            ui.vertical_centered_justified(|ui| {
+                let name_label = ui.label("Your name: ");
+                ui.text_edit_singleline(&mut self.name)
+                    .labelled_by(name_label.id);
+            });
+            ui.add(egui::Slider::new(&mut self.age, 0..=120).text("age"));
+            if ui.button("Click each year").clicked() {
+                self.age += 1;
             }
-            cmd.clear();
-        }
-    }
-
-    fn print_title(&self){
-        println!("\n\n\t  {}\n", self.menu_name)
-    }
-
-    fn print_options(&self) {
-        for (index, choice) in self.option_list.iter().enumerate() {
-            println!("\t{}. {}", index, choice)
-        }
+            ui.add(egui::Checkbox::new(&mut false, "checkbox"));
+            
+            ui.label(format!("Hello '{}', age {}", self.name, self.age));
+        });
     }
 }
-
-fn main() {
-
-    let mut hash_menu: HashMap<&str, MenuOptions> = HashMap::new();
-
-    let main_menu = MenuOptions::new(
-        "Main",
-        vec![
-            "Exit",
-            "New subject",
-            "Another option",
-        ]);
-
-    let new_subj_menu = MenuOptions::new(
-            "New Subject menu",
-            vec![
-                "Opt1",
-                "Opt2",
-                "Opt3",
-                ]);
-    
-    hash_menu.insert("Main menu", main_menu);
-    hash_menu.insert("Subject menu", new_subj_menu);
-
-    //let sub = Subject::default();
-
-    // I'd want to call the run function of new_subj_menu from
-    // inside of the run function of main_menu
-
-    
-}
-
-struct Subject{
-    name: String,
-    arguments: Vec<Argument>
-}
-
-
-impl Default for Subject{
-    fn default() -> Self { // only for example purpose
-        let card = Card{
-            keyword: "Potenziale d'azione".to_string(),
-            description: "Il potenziale blablabla...".to_string(),
-            priority_index: 0,
-            side: CardSide::Front
-        };
-    
-        let arg = Argument{
-            name: "Sist. nervoso".to_string(),
-            flashcards: vec![card]
-        };
-    
-        Subject{
-            name: "Fisiologia".to_string(),
-            arguments: vec![arg]
-        }
-    }
-}
-
-struct Argument {
-    name: String,
-    flashcards: Vec<Card>
-}
-
-struct Card {
-    keyword: String,
-    description: String,
-    priority_index: i32,
-    side: CardSide
-}
-
-enum CardSide{
-    Front,
-    Back
-}
-
