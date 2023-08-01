@@ -11,7 +11,7 @@ enum RepetitionMode{
 struct Quiz{
     subject: Subject,
     mode: RepetitionMode,
-    arguments: Argument
+    arguments: Vec<Argument>
 }
 
 fn main() {
@@ -40,7 +40,7 @@ impl Quiz{
     fn select_arguments(&mut self){
         todo!()
     }
-        
+
     fn start_quiz(&mut self){
         todo!()
     }
